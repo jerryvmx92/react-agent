@@ -13,10 +13,11 @@ ReAct is a prompting pattern that enables LLMs to solve complex tasks by breakin
 ## Features
 
 - Uses OpenAI's GPT-4o-mini model
-- Implements three built-in actions:
+- Implements four built-in actions:
   - `wikipedia`: Search Wikipedia and get summaries
   - `calculate`: Perform mathematical calculations
   - `simon_blog_search`: Search Simon Willison's blog
+  - `generate_image`: Generate images using Flux Pro AI
 - Interactive command-line interface
 - Extensible action system
 
@@ -36,12 +37,13 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 3. Install dependencies:
 ```bash
-pip install openai httpx python-dotenv
+pip install openai httpx python-dotenv fal-client
 ```
 
-4. Create a `.env` file with your OpenAI API key:
+4. Create a `.env` file with your API keys:
 ```bash
-OPENAI_API_KEY=your-api-key-here
+OPENAI_API_KEY=your-openai-api-key-here
+FAL_KEY=your-fal-api-key-here
 ```
 
 ## Usage
@@ -57,7 +59,7 @@ Enter questions when prompted. The agent will:
 3. Observe the results
 4. Provide a final answer
 
-Example interaction:
+Example interactions:
 ```
 Enter your question: What is the capital of France?
 Thought: I should look up France on Wikipedia
@@ -65,7 +67,31 @@ Action: wikipedia: France
 -- running wikipedia France
 Observation: France is a country. The capital is Paris.
 Answer: The capital of France is Paris
+
+Enter your question: Generate an image of a sunset over mountains
+Thought: I should use the image generation feature to create this scene
+Action: generate_image: A beautiful sunset over mountains with warm orange and purple hues, casting long shadows across snow-capped peaks
+-- running generate_image
+Observation: Image generated successfully. URL: [generated-image-url]
+Answer: I've generated an image of a sunset over mountains for you. You can view it at the provided URL.
 ```
+
+## Image Generation with Flux Pro
+
+The agent integrates with Flux Pro AI for image generation capabilities. This feature:
+- Uses the fal-ai/flux-pro/v1.1-ultra model
+- Generates high-quality images from text descriptions
+- Supports detailed prompts for precise image creation
+- Provides real-time generation progress updates
+- Returns a URL to the generated image
+
+To use the image generation feature:
+1. Ensure you have a valid FAL API key in your `.env` file
+2. Use natural language to request image generation
+3. The agent will automatically format your request and generate the image
+4. You'll receive a URL to view the generated image
+
+Note: Image generation requests cost $0.06 per image.
 
 ## Adding New Actions
 

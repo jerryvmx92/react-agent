@@ -3,6 +3,7 @@ import re
 import httpx
 from openai import OpenAI
 from dotenv import load_dotenv
+import fal_client
 
 # Load environment variables
 load_dotenv()
@@ -53,7 +54,12 @@ class ReActAgent:
         e.g. simon_blog_search: Django
         Search Simon's blog for that term
 
+        generate_image:
+        e.g. generate_image: A beautiful sunset over mountains
+        Generates an image based on the provided description using Flux Pro AI
+
         Always look things up on Wikipedia if you have the opportunity to do so.
+        For image generation requests, use the generate_image action with a detailed description.
 
         Example session:
 
@@ -75,7 +81,8 @@ class ReActAgent:
         self.known_actions = {
             "wikipedia": self.wikipedia,
             "calculate": self.calculate,
-            "simon_blog_search": self.simon_blog_search
+            "simon_blog_search": self.simon_blog_search,
+            "generate_image": self.generate_image
         }
 
     def query(self, question, max_turns=5):
@@ -132,6 +139,26 @@ class ReActAgent:
     @staticmethod
     def calculate(what):
         return eval(what)
+
+    @staticmethod
+    def generate_image(prompt):
+        def on_queue_update(update):
+            if isinstance(update, fal_client.InProgress):
+                for log in update.logs:
+                    print(log["message"])
+
+        try:
+            result = fal_client.subscribe(
+                "fal-ai/flux-pro/v1.1-ultra",
+                arguments={"prompt": prompt},
+                with_logs=True,
+                on_queue_update=on_queue_update,
+            )
+            if result and "images" in result and len(result["images"]) > 0:
+                return f"Image generated successfully. URL: {result['images'][0]['url']}"
+            return "Failed to generate image."
+        except Exception as e:
+            return f"Error generating image: {str(e)}"
 
 def main():
     agent = ReActAgent()
