@@ -1,7 +1,15 @@
 [project]
 name = "react-agent"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Python implementation of the ReAct pattern for LLMs"
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = []
+requires-python = ">=3.8"
+dependencies = [
+    "openai>=1.0.0",
+    "httpx>=0.24.0",
+    "python-dotenv>=1.0.0"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
